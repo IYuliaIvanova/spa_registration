@@ -6,6 +6,7 @@ export const themes = {
         blackBrown: '#222222',
         blackBasic: '#2F2F2F',
         lightGreenBlue: '#82CBAC',
+        red: '#490005',
         pink: '#FF7F96',
         pear: '#EAD71B',
         bgColor: '#B0C4DE',

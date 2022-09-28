@@ -1,5 +1,4 @@
 import React from "react";
-import { CustomLink } from "../../components/common-components/CustomLink";
 import { Divide } from "../../components/common-components/Divide";
 import { Footer } from "../../components/common-components/Footer";
 import { Image } from "../../components/common-components/Image";

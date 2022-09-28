@@ -16,6 +16,7 @@ interface IDivideProps {
     flexWrap?: string;
     rowGap?: string;
     columnGap?: string;
+    borderBottom?: string;
     position?: string;
     top?: string;
     left?: string;
@@ -44,6 +45,8 @@ export const Divide = styled.div<IDivideProps>`
     row-gap: ${p => p.rowGap}px;
     column-gap: ${p => p.columnGap}px;
     overflow: ${p => p.overflow};
+
+    border-bottom: ${p => p.borderBottom};
 
     position: ${(p) => ((p.position !== 'relative') && (p.position !== 'static') ? `${p.position};
         top: ${p.top}px;
