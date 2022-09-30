@@ -25,18 +25,19 @@ export const Button = styled.button<IButtonProps>`
     padding: ${p => p.padding};
 
     color: ${p => p.color || COLOR.blackBasic};
-    background-color: ${p => p.backgroundColor || COLOR.pink};
+    background-color: ${p => p.backgroundColor || COLOR.lightGreenBlue};
     border: none;
     border-radius: ${p => p.borderRadius || 5}px;
 
     font-size: ${p => p.fontSize || "24"}px;
-    line-height: ${p => p.lineHeight || "30"}px;
+    line-height: ${p => p.lineHeight || "20"}px;
     font-weight: 500;
 
     transition: all 0.5s linear;
     cursor: pointer;
 
     &:hover {
+         transform: scale(1.1);
         box-shadow: 3px 3px 10px ${COLOR.blackBasic};
     }
 

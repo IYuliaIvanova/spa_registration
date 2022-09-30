@@ -3,7 +3,7 @@ export const validation = (id: string, value: string, setError: (error: (string 
 
     for (const key in data) {
         if (key === id){
-            if(data[key].required){
+            if(data[key].required && key !== "sex" && key !== "hobby"){
                 if(data[key].regExp){
                     const reg = new RegExp(data[key].regExp)
                     const testValue = value.split(/[ ()-]/).join("")
@@ -17,9 +17,18 @@ export const validation = (id: string, value: string, setError: (error: (string 
                 else if(data[key].minLength > value.length || data[key].maxLength < value.length){
                     setError(`Min length = ${data[key].minLength} and max length = ${data[key].maxLength}`)
                 }
+                else if(data[key].minAge > value || data[key].maxAge < value){
+                    setError(`Min age = ${data[key].minAge} and max age = ${data[key].maxAge}`)
+                }
                 else {
                     setError(false)
                 }
+            }
+            else if((id === "sex" || id ==="hobby") && data[key].required){
+                setError("Required!")
+            }
+            else {
+                setError(false)
             }
         }
         

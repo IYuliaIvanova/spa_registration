@@ -4,13 +4,14 @@ import { Divide } from "../common-components/Divide";
 
 
 export const ModalWindow = styled(Divide)`
-    padding: 10px;
+    padding: 20px;
     min-height: 200px;
     max-width: 600px;
 
-    border: 5px solid ${COLOR.white};
-    border-radius: 5px;
-    background-color: ${COLOR.blackBasic};
+    border: 2px solid ${COLOR.blackBrown};
+    border-radius: 20px;
+    background-color: ${COLOR.bgColorModal};
+    box-shadow: 1px 1px 50px ${COLOR.black};
 
     display: flex;
     flex-direction: column;

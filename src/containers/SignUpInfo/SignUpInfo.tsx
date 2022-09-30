@@ -1,20 +1,26 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "../../components/common-components/Button";
 import { Divide } from "../../components/common-components/Divide";
 import { Form } from "../../components/common-components/Form";
 import { Input } from "../../components/common-components/Input";
 import { Label } from "../../components/common-components/Label";
 import { Span } from "../../components/common-components/Span";
+import { ContextPerson } from "../../components/Context/ContextPerson";
+import { IInformationSignUp } from "../../constants/informationPerson";
 import { themes } from "../../constants/themes";
 import { validation } from "../../utils/validation";
 
-export const SignUpInfo = () => {
-    const [isValid, setIsValid] = useState(false)
+interface ISignUpInfoProps {
+    setSignUpInfo: (signUpInformation: IInformationSignUp) => void;
+}
 
-    const [mobilePhone, setMobilePhone] = useState('+375 (**) ***-**-**');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [repeatPassword, setRepeatPassword] = useState('');
+export const SignUpInfo = ({ setSignUpInfo }: ISignUpInfoProps) => {
+    const { signUpInfo, toggleIsValid } = useContext(ContextPerson)
+
+    const [mobilePhone, setMobilePhone] = useState(signUpInfo.mobilePhone);
+    const [email, setEmail] = useState(signUpInfo.email);
+    const [password, setPassword] = useState(signUpInfo.password);
+    const [repeatPassword, setRepeatPassword] = useState(signUpInfo.repeatPassword);
 
     const [errorMobilePhone, setErrorMobilePhone] = useState<(string | boolean)>(false)
     const [errorEmail, setErrorEmail] = useState<(string | boolean)>(false)
@@ -22,16 +28,18 @@ export const SignUpInfo = () => {
     const [errorRepeatPassword, setErrorRepeatPassword] = useState<(string | boolean)>(false)
 
     const handleInputMaskPhone = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { id, value } = e.target
+        const { value } = e.target
         const result = value.replaceAll(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
 
         if (result) {
             const [ numbOne, numbTwo, numbThree, numbFour, numbFive, numbSix ] = result;
             setMobilePhone(`+${numbTwo} (${numbThree}) ${numbFour}-${numbFive}-${numbSix}`);
         }
-
-        validation(id, mobilePhone, setErrorMobilePhone);
     }
+
+    useEffect(() => {
+        validation('mobilePhone', mobilePhone, setErrorMobilePhone);
+    },[mobilePhone])
 
     const handleInputEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target
@@ -50,15 +58,26 @@ export const SignUpInfo = () => {
         }
     }
 
-    const handleValidForm = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        if(password !== repeatPassword){
+    useEffect(() => {
+        if(repeatPassword !== password){
             setErrorRepeatPassword("Wrong password!")
-            setIsValid(false)
         }
         else {
             setErrorRepeatPassword(false)
-            setIsValid(true)
+        }
+    },[repeatPassword, password])
+
+    const handleNextForm = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        if(!errorMobilePhone && !errorEmail && !errorPassword && !errorRepeatPassword){
+            setSignUpInfo({
+                        mobilePhone: mobilePhone,
+                        email: email,
+                        password: password,
+                        repeatPassword: repeatPassword,
+                    })
+            toggleIsValid();
         }
     }
 
@@ -99,7 +118,7 @@ export const SignUpInfo = () => {
                     <Span fontSize="22" color={themes.colors.red}>{errorRepeatPassword}</Span>
                 }
             </Divide>
-            <Button padding="2px 50px" margin="0 0 0 auto" onClick={handleValidForm}>Next</Button>
+            <Button padding="2px 50px" margin="0 0 0 auto" onClick={handleNextForm}>Next</Button>
         </Form>
     )
 }
