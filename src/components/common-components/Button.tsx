@@ -18,15 +18,15 @@ interface IButtonProps {
 }
 
 export const Button = styled.button<IButtonProps>`
-    width: ${p => typeof p.width === "number" ? `${p.width}%` : `${p.width}px` || '143px'};
+    width: ${p => typeof p.width === "number" ? `${p.width}%` : `${p.width}px`};
     height: ${p => p.height || "40"}px;
 
     margin: ${p => p.margin};
     padding: ${p => p.padding};
 
-    color: ${p => p.color || COLOR.blackBasic};
+    color: ${p => p.color || COLOR.white};
     background-color: ${p => p.backgroundColor || COLOR.lightGreenBlue};
-    border: none;
+    border: 1px solid ${COLOR.grey};
     border-radius: ${p => p.borderRadius || 5}px;
 
     font-size: ${p => p.fontSize || "24"}px;
@@ -37,7 +37,7 @@ export const Button = styled.button<IButtonProps>`
     cursor: pointer;
 
     &:hover {
-         transform: scale(1.1);
+        transform: scale(1.05);
         box-shadow: 3px 3px 10px ${COLOR.blackBasic};
     }
 

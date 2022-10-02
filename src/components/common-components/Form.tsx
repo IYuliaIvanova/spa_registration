@@ -37,5 +37,5 @@ export const Form = styled.form<IFormProps>`
     row-gap: ${p => p.rowGap}px;
 
     background-color: ${p => p.backgroundColor};
-    box-shadow: 1px 1px 50px ${COLOR.black};
+    box-shadow: 1px 1px 10px ${COLOR.blackBasic};
 `

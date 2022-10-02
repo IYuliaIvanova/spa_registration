@@ -11,7 +11,7 @@ import { Option } from "../../components/common-components/Option";
 import { themes } from "../../constants/themes";
 import { Span } from "../../components/common-components/Span";
 import { Checkbox } from "../../components/common-components/Checkbox";
-import { validation } from "../../utils/validation";
+import { isRequiredField, validation } from "../../utils/validation";
 import { ContextInformationPerson } from "../../components/Context/ContextInformationPerson";
 import { ContextPerson } from "../../components/Context/ContextPerson";
 import { IInformationPersonalInfo, IInformationSignUp } from "../../constants/informationPerson";
@@ -45,6 +45,9 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
     const [errorSex, setErrorSex] = useState<(string | boolean)>(false)
     const [errorBirthday, setErrorBirthday] = useState<(string | boolean)>(false)
     const [errorHobby, setErrorHobby] = useState<(string | boolean)>(false)
+    const [errorOcean, setErrorOcean] = useState<(string | boolean)>(false)
+
+    const [errors, setErrors] = useState([errorFirstName, errorLastName, errorSex, errorBirthday, errorOcean, errorHobby])
 
     const selectOceanRef = useRef<HTMLSelectElement | null>(null);
     // const checkboxHobbyRef = useRef<HTMLInputElement | null>(null);
@@ -57,8 +60,13 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
     }
 
     useEffect(() => {
-        setAge(getAge(+day, +month, +year))
-        setBirthday(`${day}.${month}.${year}`);
+        if(day.length !== 0 && month.length !== 0 && year.length !== 0){
+            setAge(getAge(+day, +month, +year))
+            setBirthday(`${day}.${month}.${year}`);
+            validation("birthday", age, setErrorBirthday)
+        } else {
+            setErrorBirthday(false)
+        }
     }, [day, month, year])
 
     const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,18 +124,37 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
         toggleIsValid();
     }
 
-    const handleValidForm = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        if(sex.length === 0){
-            validation("sex", sex ,setErrorSex);
+    useEffect(() => {
+        if(firstName.length === 0){
+            setErrorFirstName(errors[0])
         }
-        if(hobby.length === 0){
-            validation("hobby", "" ,setErrorHobby);
+        if(lastName.length === 0){
+            setErrorLastName(errors[1])
         }
-        if(day.length !== 0 && month.length !== 0 && year.length !== 0){
-            validation("birthday", age, setErrorBirthday);
+        if(sex.length === 0 ){
+            setErrorSex(errors[2])
         } 
-        if(!errorFirstName && !errorLastName && !errorSex && !errorBirthday && !errorHobby){
+        if(birthday.length === 0 ){
+            setErrorBirthday(errors[3])
+        }
+    }, [errors])
+
+    const handleSubmitForm = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        const isValid = isRequiredField({
+            firstName: firstName,
+            lastName: lastName,
+            sex: sex,
+            birthday: birthday,
+            ocean: selectOceanRef.current?.value || "",
+            hobby: hobby,
+        }, setErrors)
+
+        if(hobby.length === 0 ){
+            setErrorHobby("Required!")
+        }
+
+        if(!errorFirstName && !errorLastName && !errorSex && !errorBirthday && !errorHobby && isValid){
             addInformation({
                 id: Date.now(),
                 signUpInfo: signUpInfo,
@@ -143,8 +170,7 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
             setIsOpenModal(true)
         }
     }
-
-    useEffect(() => {
+    useEffect(() =>{
         setPersonalInfo({
             firstName: firstName,
             lastName: lastName,
@@ -154,7 +180,6 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
             hobby: hobby,
         })
     },[firstName, lastName, sex, birthday, ocean, hobby])
-
     return (
         <Form 
             padding="30px 30px" 
@@ -162,24 +187,23 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
             flexDirection="column" 
             alignItems="center" 
             rowGap="15" 
-            backgroundColor={themes.colors.formColor}
         >
             <Divide width={80} display="flex" flexDirection="column" rowGap="5"> 
                 <Label htmlFor="firstName">First Name</Label>
                 <Input id="firstName" value={firstName} onChange={handleChangeInput}/>
                 {errorFirstName && 
-                    <Span fontSize="22" color={themes.colors.red}>{errorFirstName}</Span>
+                    <Span color={themes.colors.red}>{errorFirstName}</Span>
                 }
             </Divide>
             <Divide width={80} display="flex" flexDirection="column" rowGap="5"> 
                 <Label htmlFor="lastName">Last Name</Label>
                 <Input id="lastName" value={lastName} onChange={handleChangeInput}/>
                 {errorLastName && 
-                    <Span fontSize="22" color={themes.colors.red}>{errorLastName}</Span>
+                    <Span color={themes.colors.red}>{errorLastName}</Span>
                 }
             </Divide>
             <Divide width={80} display="flex" flexDirection="column" alignItems="start" rowGap="5"> 
-                <Paragraph fontSize="22" color={themes.colors.white}>Sex</Paragraph>
+                <Paragraph fontSize="22">Sex</Paragraph>
                 <Divide>
                     <Input id="sexMan" type={"radio"} value="Man" name="sex" margin="0 10px 0 0" onChange={handleChangeInput}/>
                     <Label htmlFor="sexMan" fontSize="18">Man</Label>
@@ -189,20 +213,22 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
                     <Label htmlFor="sexWomen" fontSize="18">Women</Label>
                 </Divide>
                 {errorSex && 
-                    <Span fontSize="22" color={themes.colors.red}>{errorSex}</Span>
+                    <Span color={themes.colors.red}>{errorSex}</Span>
                 }
             </Divide>
             <Divide width={80} display="flex" flexDirection="column" rowGap="5"> 
-                <Paragraph fontSize="22" color={themes.colors.white}>Birthday</Paragraph>    
-                <Input id="day" type={"number"} placeholder="DD" min={1} max={31} value={day} onChange={handleChangeInput}/>
-                <Input id="month" type={"number"} placeholder="MM" min={1} max={12} value={month} onChange={handleChangeInput}/>
-                <Input id="year" type={"number"} placeholder="YYYY" min={1930} max={2100} value={year} onChange={handleChangeInput}/>
+                <Paragraph fontSize="22">Birthday</Paragraph>    
+                <Divide display="flex" columnGap="10">
+                    <Input id="day" type={"number"} placeholder="DD" min={1} max={31} value={day} onChange={handleChangeInput}/>
+                    <Input id="month" type={"number"} placeholder="MM" min={1} max={12} value={month} onChange={handleChangeInput}/>
+                    <Input id="year" type={"number"} placeholder="YYYY" min={1930} max={2100} value={year} onChange={handleChangeInput}/>
+                </Divide>
                 {errorBirthday && 
-                    <Span fontSize="22" color={themes.colors.red}>{errorBirthday}</Span>
+                    <Span color={themes.colors.red}>{errorBirthday}</Span>
                 }
             </Divide>
             <Divide width={80} display="flex" flexDirection="column" rowGap="5"> 
-                <Paragraph fontSize="22" color={themes.colors.white}>Your Favorite Ocean</Paragraph> 
+                <Paragraph fontSize="22">Your Favorite Ocean</Paragraph> 
                 <Select name="ocean" value={ocean} ref={selectOceanRef} onChange={handleChangeSelect}>
                     {data.ocean.oneOf.map((item, id) => {
                         return (
@@ -212,7 +238,7 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
                 </Select>
             </Divide>
             <Divide width={80} display="flex" flexDirection="column" rowGap="5"> 
-                <Paragraph fontSize="22" color={themes.colors.white}>Hobby</Paragraph> 
+                <Paragraph fontSize="22">Hobby</Paragraph> 
                 {data.hobby.anyOf.map((item, id) => {
                     return (
                         <Divide>
@@ -222,12 +248,12 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
                     )
                 })}
                 {errorHobby && 
-                    <Span fontSize="22" color={themes.colors.red}>{errorHobby}</Span>
+                    <Span color={themes.colors.red}>{errorHobby}</Span>
                 }
             </Divide>
-            <Divide width={80} display="flex" columnGap="10">
-                <Button padding="2px 20px" fontSize="14" onClick={handleGoBack}>Change SignUp Information</Button>
-                <Button padding="2px 40px" onClick={handleValidForm}>Complete</Button>
+            <Divide width={80} display="flex" flexDirection="column" rowGap="10">
+                <Button padding="2px 40px" onClick={handleSubmitForm}>Complete</Button>
+                <Button padding="2px 20px" backgroundColor={themes.colors.grey} onClick={handleGoBack}>Change SignUp Information</Button>
             </Divide>
         </Form>
     )

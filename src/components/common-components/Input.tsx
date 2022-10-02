@@ -30,13 +30,12 @@ export const Input = styled.input<IInputProps>`
 
     display: ${p => p.display};
 
-    border: none;
+    border: 1px solid ${COLOR.grey};
     border-radius: 5px;
-    background-color: ${p => p.backgroundColor || COLOR.bgColorInput};
-    color: ${p => p.color || COLOR.white};
+    background-color: ${p => p.backgroundColor};
+    color: ${p => p.color || COLOR.black};
     outline: none;
 
-    font-weight: ${p => p.fontWeight || 400}px;
     font-size: ${p => p.fontSize || 18}px;
     line-height: ${p => p.lineHeight || 22}px;
 
@@ -48,6 +47,5 @@ export const Input = styled.input<IInputProps>`
     &:focus{
         outline: none;
         box-shadow: 3px 3px 10px ${COLOR.blackBasic};
-        background: ${COLOR.bgColorInput};
     }
 `

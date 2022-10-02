@@ -9,6 +9,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Nunito', sans-serif;
   }
 
   #root {
@@ -16,8 +17,6 @@ const GlobalStyle = createGlobalStyle`
     flex-direction: column;
     align-items: center;
     height: 100%;
-
-    background-color: ${themes.colors.bgColor};
   }
 `;
 

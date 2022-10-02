@@ -13,7 +13,8 @@ export interface IContextPerson {
 export const defaultStatePerson = {
   id: 0,
   signUpInfo: {
-    mobilePhone: "+375 (**) ***-**-**",
+    //mobilePhone: "+375 (**) ***-**-**",
+    mobilePhone: "",
     email: "",
     password:"",
     repeatPassword: "",

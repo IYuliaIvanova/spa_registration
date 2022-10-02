@@ -1,11 +1,14 @@
-export interface IInformationSignUp {
+interface IObjectKeys {
+    [key: string]: string | string[] | number;
+ }
+
+export interface IInformationSignUp extends IObjectKeys {
     mobilePhone: string;
     email: string;
     password: string;
-    repeatPassword: string;
 }
 
-export interface IInformationPersonalInfo {
+export interface IInformationPersonalInfo extends IObjectKeys {
     firstName: string;
     lastName: string;
     sex: string;

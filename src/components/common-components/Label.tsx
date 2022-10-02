@@ -30,6 +30,6 @@ export const Label = styled.label<ILabelProps>`
     font-size: ${p => p.fontSize || "22"}px;
     line-height: ${p => p.lineHeight || "22"}px;
 
-    color: ${p => p.color || COLOR.white};
+    color: ${p => p.color || COLOR.black};
     cursor: pointer;
 `

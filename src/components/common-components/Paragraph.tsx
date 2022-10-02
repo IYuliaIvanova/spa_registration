@@ -27,5 +27,5 @@ export const Paragraph = styled.p<IParagraphProps>`
     line-height: ${p => p.lineHeight || "26"}px;
     letter-spacing: 0.48px;
     
-    color: ${p => p.color || COLOR.blackBasic};
+    color: ${p => p.color || COLOR.black};
 `

@@ -43,7 +43,7 @@ export const Main = () => {
     const handleCancel = () => {
         setIsOpenModal(false);
     }
-    console.log(personalInfo)
+
     return (
         <>
             <HeaderContainer/>

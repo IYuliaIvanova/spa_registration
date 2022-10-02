@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../../components/common-components/Button";
 import { Divide } from "../../components/common-components/Divide";
 import { Form } from "../../components/common-components/Form";
@@ -8,24 +8,26 @@ import { Span } from "../../components/common-components/Span";
 import { ContextPerson } from "../../components/Context/ContextPerson";
 import { IInformationSignUp } from "../../constants/informationPerson";
 import { themes } from "../../constants/themes";
-import { validation } from "../../utils/validation";
+import { isRequiredField, validation } from "../../utils/validation";
 
 interface ISignUpInfoProps {
     setSignUpInfo: (signUpInformation: IInformationSignUp) => void;
 }
 
-export const SignUpInfo = ({ setSignUpInfo }: ISignUpInfoProps) => {
+export const SignUpInfo = React.memo(({ setSignUpInfo }: ISignUpInfoProps) => {
     const { signUpInfo, toggleIsValid } = useContext(ContextPerson)
 
     const [mobilePhone, setMobilePhone] = useState(signUpInfo.mobilePhone);
     const [email, setEmail] = useState(signUpInfo.email);
     const [password, setPassword] = useState(signUpInfo.password);
-    const [repeatPassword, setRepeatPassword] = useState(signUpInfo.repeatPassword);
+    const [repeatPassword, setRepeatPassword] = useState("");
 
     const [errorMobilePhone, setErrorMobilePhone] = useState<(string | boolean)>(false)
     const [errorEmail, setErrorEmail] = useState<(string | boolean)>(false)
     const [errorPassword, setErrorPassword] = useState<(string | boolean)>(false)
     const [errorRepeatPassword, setErrorRepeatPassword] = useState<(string | boolean)>(false)
+
+    const [errors, setErrors] = useState([errorMobilePhone, errorEmail, errorPassword])
 
     const handleInputMaskPhone = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target
@@ -33,12 +35,15 @@ export const SignUpInfo = ({ setSignUpInfo }: ISignUpInfoProps) => {
 
         if (result) {
             const [ numbOne, numbTwo, numbThree, numbFour, numbFive, numbSix ] = result;
-            setMobilePhone(`+${numbTwo} (${numbThree}) ${numbFour}-${numbFive}-${numbSix}`);
+            setMobilePhone(`+375 (${numbThree}) ${numbFour}-${numbFive}-${numbSix}`);
         }
     }
 
     useEffect(() => {
-        validation('mobilePhone', mobilePhone, setErrorMobilePhone);
+        if(mobilePhone.length !== 0)
+        {
+            validation('mobilePhone', mobilePhone, setErrorMobilePhone);
+        }  
     },[mobilePhone])
 
     const handleInputEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,27 +65,43 @@ export const SignUpInfo = ({ setSignUpInfo }: ISignUpInfoProps) => {
 
     useEffect(() => {
         if(repeatPassword !== password){
-            setErrorRepeatPassword("Wrong password!")
+            setErrorRepeatPassword("Passwords do not match!")
         }
         else {
             setErrorRepeatPassword(false)
         }
     },[repeatPassword, password])
 
+    useEffect(() => {
+        if(mobilePhone.length === 0){
+            setErrorMobilePhone(errors[0])
+        }
+        if(email.length === 0){
+            setErrorEmail(errors[1])
+        }
+        if(password.length === 0 ){
+            setErrorPassword(errors[2])
+        } 
+    }, [errors])
+
     const handleNextForm = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
-        if(!errorMobilePhone && !errorEmail && !errorPassword && !errorRepeatPassword){
+        const isValid = isRequiredField({
+            mobilePhone: mobilePhone,
+            email: email,
+            password: password,
+        }, setErrors)
+
+         if(!errorMobilePhone && !errorEmail && !errorPassword && !errorRepeatPassword && isValid) {
             setSignUpInfo({
                         mobilePhone: mobilePhone,
                         email: email,
                         password: password,
-                        repeatPassword: repeatPassword,
                     })
             toggleIsValid();
-        }
+         }
     }
-
     return (
         <Form 
             padding="30px 30px" 
@@ -88,37 +109,36 @@ export const SignUpInfo = ({ setSignUpInfo }: ISignUpInfoProps) => {
             flexDirection="column" 
             alignItems="center" 
             rowGap="15" 
-            backgroundColor={themes.colors.formColor}
         >
             <Divide width={80} display="flex" flexDirection="column" rowGap="5"> 
                 <Label htmlFor="mobilePhone">Mobile phone</Label>
                 <Input id="mobilePhone" value={mobilePhone} onChange={handleInputMaskPhone}/>
                 {errorMobilePhone && 
-                    <Span fontSize="22" color={themes.colors.red}>{errorMobilePhone}</Span>
+                    <Span color={themes.colors.red}>{errorMobilePhone}</Span>
                 }
             </Divide>
             <Divide width={80} display="flex" flexDirection="column" rowGap="5"> 
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type={"email"} value={email} onChange={handleInputEmail}/>
                 {errorEmail && 
-                    <Span fontSize="22" color={themes.colors.red}>{errorEmail}</Span>
+                    <Span color={themes.colors.red}>{errorEmail}</Span>
                 }
             </Divide>
             <Divide width={80} display="flex" flexDirection="column" rowGap="5"> 
                 <Label htmlFor="password">Password</Label>
                 <Input id="password" type={"password"} value={password} onChange={handleInputPassword}/>
                 {errorPassword && 
-                    <Span fontSize="22" color={themes.colors.red}>{errorPassword}</Span>
+                    <Span color={themes.colors.red}>{errorPassword}</Span>
                 }
             </Divide>
             <Divide width={80} display="flex" flexDirection="column" rowGap="5"> 
                 <Label htmlFor="repeatPassword">Repeat Password</Label>
                 <Input id="repeatPassword" type={"password"} value={repeatPassword} onChange={handleInputPassword}/>
                 {errorRepeatPassword && 
-                    <Span fontSize="22" color={themes.colors.red}>{errorRepeatPassword}</Span>
+                    <Span color={themes.colors.red}>{errorRepeatPassword}</Span>
                 }
             </Divide>
-            <Button padding="2px 50px" margin="0 0 0 auto" onClick={handleNextForm}>Next</Button>
+            <Button width={80} padding="2px 50px" onClick={handleNextForm}>Next</Button>
         </Form>
     )
-}
+})

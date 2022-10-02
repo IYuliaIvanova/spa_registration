@@ -14,7 +14,7 @@
       "regExp": "^\\+375\\d{9}$"
     },
     "password": {
-      "required": true,
+      "required": false,
       "minLength": "8",
       "maxLength": "20"
     },

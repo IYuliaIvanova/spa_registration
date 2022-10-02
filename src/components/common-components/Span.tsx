@@ -23,8 +23,8 @@ export const Span = styled.span<ISpanProps>`
 
     font-style: ${p => p.fontStyle || "normal"};
     font-weight: ${p => p.fontWeight || "500"};
-    font-size: ${p => p.fontSize || "18"}px;
-    line-height: ${p => p.lineHeight || "22"}px;
+    font-size: ${p => p.fontSize || "16"}px;
+    line-height: ${p => p.lineHeight || "18"}px;
     text-decoration: ${p => p.textDecoration || "none"};
 
     color: ${p => p.color || COLOR.blackBrown};
@@ -32,7 +32,7 @@ export const Span = styled.span<ISpanProps>`
     ${p => p.crumb && css`
         height: 40px;
         width: 40px;
-        padding: 6px 0 0 0px;
+        padding: 11px 0 0 0px;
 
         font-size: 20px;
         text-align: center;
