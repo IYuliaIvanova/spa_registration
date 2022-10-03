@@ -38,7 +38,7 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
     const [hobby, setHobby] = useState<(string | string[])>(personalInfo.hobby);
     const [ocean, setOcean] = useState(personalInfo.ocean);
 
-    const [isHobbyChecked, setIsHobbyChecked] = useState(false)
+    // const [isHobbyChecked, setIsHobbyChecked] = useState(false)
 
     const [errorFirstName, setErrorFirstName] = useState<(string | boolean)>(false)
     const [errorLastName, setErrorLastName] = useState<(string | boolean)>(false)
@@ -92,7 +92,6 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
             default:
                 break;
         }
-        
         if(name === "sex"){
             setSex(value)
             setErrorSex(false)
@@ -170,6 +169,7 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
             setIsOpenModal(true)
         }
     }
+
     useEffect(() =>{
         setPersonalInfo({
             firstName: firstName,
@@ -180,6 +180,7 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
             hobby: hobby,
         })
     },[firstName, lastName, sex, birthday, ocean, hobby])
+
     return (
         <Form 
             padding="30px 30px" 

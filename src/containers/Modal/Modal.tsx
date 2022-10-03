@@ -21,7 +21,15 @@ export const Modal = ({ title, isOpen, onCancel, children }: IModalProps) => {
                     <Portal>
                         <ModalOverlay className="modalOverlay">
                             <ModalWindow className="modalWindow">
-                                <Divide width={100} padding="0 0 10px 0" className="modalHeader" borderBottom={`1px solid ${themes.colors.whiteSmoky}`} display="flex" justifyContent="space-between" columnGap="30"> 
+                                <Divide 
+                                    width={100} 
+                                    padding="0 0 10px 0" 
+                                    className="modalHeader" 
+                                    borderBottom={`1px solid ${themes.colors.whiteSmoky}`} 
+                                    display="flex" 
+                                    justifyContent="space-between" 
+                                    columnGap="30"
+                                > 
                                     <HeadingSecondLevel className="modalTitle">{title}</HeadingSecondLevel>
                                     <Button width='22' height='22' onClick={onCancel} backgroundColor={themes.colors.pink}>&#9746;</Button>
                                 </Divide>

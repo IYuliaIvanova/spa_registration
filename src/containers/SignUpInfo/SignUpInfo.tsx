@@ -102,6 +102,7 @@ export const SignUpInfo = React.memo(({ setSignUpInfo }: ISignUpInfoProps) => {
             toggleIsValid();
          }
     }
+    
     return (
         <Form 
             padding="30px 30px" 
