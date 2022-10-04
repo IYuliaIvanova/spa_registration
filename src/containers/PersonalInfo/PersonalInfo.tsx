@@ -16,6 +16,11 @@ import { ContextInformationPerson } from "../../components/Context/ContextInform
 import { ContextPerson } from "../../components/Context/ContextPerson";
 import { IInformationPersonalInfo, IInformationSignUp } from "../../constants/informationPerson";
 
+enum Sex {
+    Women = "Women",
+    Men = "Men",
+}
+
 interface IPersonalInfoProps {
     id: number;
     signUpInfo: IInformationSignUp;
@@ -38,7 +43,7 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
     const [hobby, setHobby] = useState<(string | string[])>(personalInfo.hobby);
     const [ocean, setOcean] = useState(personalInfo.ocean);
 
-    // const [isHobbyChecked, setIsHobbyChecked] = useState(false)
+    const [isHobbyChecked, setIsHobbyChecked] = useState(data.hobby.anyOf.map((item) => { return {[item]: false} }))
 
     const [errorFirstName, setErrorFirstName] = useState<(string | boolean)>(false)
     const [errorLastName, setErrorLastName] = useState<(string | boolean)>(false)
@@ -50,7 +55,6 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
     const [errors, setErrors] = useState([errorFirstName, errorLastName, errorSex, errorBirthday, errorOcean, errorHobby])
 
     const selectOceanRef = useRef<HTMLSelectElement | null>(null);
-    // const checkboxHobbyRef = useRef<HTMLInputElement | null>(null);
 
     const getAge = (day: number, month: number, year: number): string => {
         const now = new Date(); 
@@ -70,7 +74,7 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
     }, [day, month, year])
 
     const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { id, name, value } = e.target
+        const { id, name, value, checked } = e.target
         switch (id) {
             case "firstName":
                 setFirstName(value)
@@ -97,10 +101,27 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
             setErrorSex(false)
         }
         if(name === "hobby"){
-            if(Array.isArray(hobby)){
-                hobby.push(value)
+            if(checked){
+                setHobby(res => {
+                    if(Array.isArray(res) && !hobby.includes(value)){
+                        res.push(value)
+                    }
+                    return res
+                })
+                // setIsHobbyChecked(obj => {
+                //    obj.map(item => item[value] = true)
+                //    console.log(obj)
+                //    return obj
+                // })
+            } else {
+                setHobby(res => {
+                    let result: string | string[] = []
+                    if(Array.isArray(res)){
+                        result = res.filter(item => item !== value);
+                    }
+                    return result
+                })
             }
-            setHobby(hobby)
             setErrorHobby(false)
         }
     }
@@ -205,14 +226,14 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
             </Divide>
             <Divide width={80} display="flex" flexDirection="column" alignItems="start" rowGap="5"> 
                 <Paragraph fontSize="22">Sex</Paragraph>
-                <Divide>
-                    <Input id="sexMan" type={"radio"} value="Man" name="sex" margin="0 10px 0 0" onChange={handleChangeInput}/>
-                    <Label htmlFor="sexMan" fontSize="18">Man</Label>
-                </Divide>
-                <Divide>
-                    <Input id="sexWomen" type={"radio"} value="Women" name="sex" margin="0 10px 0 0" onChange={handleChangeInput}/>
-                    <Label htmlFor="sexWomen" fontSize="18">Women</Label>
-                </Divide>
+                {Object.values(Sex).map((value) => {
+                    return (
+                        <Divide>
+                            <Input id="sexMan" type={"radio"} value={value} checked={value === sex ? true : false} name="sex" margin="0 10px 0 0" onChange={handleChangeInput}/>
+                            <Label htmlFor="sexMan" fontSize="18">{value}</Label>
+                        </Divide>
+                    )
+                })}
                 {errorSex && 
                     <Span color={themes.colors.red}>{errorSex}</Span>
                 }
