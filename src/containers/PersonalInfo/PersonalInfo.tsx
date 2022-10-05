@@ -25,11 +25,13 @@ interface IPersonalInfoProps {
     id: number;
     signUpInfo: IInformationSignUp;
     setPersonalInfo: (personalInfo: IInformationPersonalInfo) => void;
-    setIsOpenModal: (isOpenModal: boolean) => void
+    setIsOpenModal: (isOpenModal: boolean) => void;
+    checkedHobby: boolean[];
+    setCheckedHobby: (checkedHobby: boolean[]) => void;
 }
 
-export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }: IPersonalInfoProps) => {
-    const { informations, addInformation } = useContext(ContextInformationPerson);
+export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal, checkedHobby, setCheckedHobby }: IPersonalInfoProps) => {
+    const { addInformation } = useContext(ContextInformationPerson);
     const { personalInfo, toggleIsValid } = useContext(ContextPerson)
     
     const [firstName, setFirstName] = useState(personalInfo.firstName);
@@ -43,7 +45,7 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
     const [hobby, setHobby] = useState<(string | string[])>(personalInfo.hobby);
     const [ocean, setOcean] = useState(personalInfo.ocean);
 
-    const [isHobbyChecked, setIsHobbyChecked] = useState(data.hobby.anyOf.map((item) => { return {[item]: false} }))
+    const hobbyRef = useRef<HTMLInputElement | null>(null);
 
     const [errorFirstName, setErrorFirstName] = useState<(string | boolean)>(false)
     const [errorLastName, setErrorLastName] = useState<(string | boolean)>(false)
@@ -108,11 +110,6 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
                     }
                     return res
                 })
-                // setIsHobbyChecked(obj => {
-                //    obj.map(item => item[value] = true)
-                //    console.log(obj)
-                //    return obj
-                // })
             } else {
                 setHobby(res => {
                     let result: string | string[] = []
@@ -122,10 +119,14 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
                     return result
                 })
             }
+            const position = data.hobby.anyOf.findIndex(item => item === value)
+            const updatedCheckedState = checkedHobby.map((item, index) =>
+                index === position ? !item : item
+            );
+            setCheckedHobby(updatedCheckedState);
             setErrorHobby(false)
         }
     }
-
     const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { value } = e.target
         setOcean(value)
@@ -226,10 +227,18 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
             </Divide>
             <Divide width={80} display="flex" flexDirection="column" alignItems="start" rowGap="5"> 
                 <Paragraph fontSize="22">Sex</Paragraph>
-                {Object.values(Sex).map((value) => {
+                {Object.values(Sex).map((value, id) => {
                     return (
-                        <Divide>
-                            <Input id="sexMan" type={"radio"} value={value} checked={value === sex ? true : false} name="sex" margin="0 10px 0 0" onChange={handleChangeInput}/>
+                        <Divide key={id}>
+                            <Input 
+                                id={value}
+                                name="sex"
+                                type={"radio"} 
+                                value={value} 
+                                checked={value === sex ? true : false} 
+                                margin="0 10px 0 0" 
+                                onChange={handleChangeInput}
+                            />
                             <Label htmlFor="sexMan" fontSize="18">{value}</Label>
                         </Divide>
                     )
@@ -262,10 +271,19 @@ export const PersonalInfo = ({ id, signUpInfo, setPersonalInfo, setIsOpenModal }
             <Divide width={80} display="flex" flexDirection="column" rowGap="5"> 
                 <Paragraph fontSize="22">Hobby</Paragraph> 
                 {data.hobby.anyOf.map((item, id) => {
+                    console.log(checkedHobby)
                     return (
-                        <Divide>
-                            <Checkbox type='checkbox' name="hobby" id={item.toLowerCase()} value={item} onChange={handleChangeInput}/>
-                            <Label htmlFor={item.toLowerCase()} key={id} fontSize="18"><Span margin="0 10px 0 0"/>{item}</Label>
+                        <Divide key={id}>
+                            <Checkbox 
+                                type='checkbox' 
+                                name="hobby" 
+                                ref={hobbyRef} 
+                                id={item.toLowerCase()}  
+                                checked={checkedHobby[id]} 
+                                value={item} 
+                                onChange={handleChangeInput}
+                            />
+                            <Label htmlFor={item.toLowerCase()} fontSize="18"><Span margin="0 10px 0 0"/>{item}</Label>
                         </Divide>
                     )
                 })}

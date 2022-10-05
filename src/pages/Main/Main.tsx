@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import data from "../../stubs/schema.json"
 import { Paragraph } from "../../components/common-components/Paragraph";
 import { Section } from "../../components/common-components/Section";
 import { ContextInformationPerson, IInformationPerson } from "../../components/Context/ContextInformationPerson";
@@ -19,6 +20,9 @@ export const Main = () => {
     const [isValidSignUpInfo, setIsValidSignUpInfo] = useState(defaultStatePerson.isValidSignUpInfo);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [isNotVisiblePersonalInfo, setIsNotVisiblePersonalInfo] = useState(true);
+    const [checkedHobby, setCheckedHobby] = useState(
+        new Array(data.hobby.anyOf.length).fill(false)
+    );
 
     const [informations, setInformations] = useState<IInformationPerson[]>([]);
 
@@ -57,7 +61,14 @@ export const Main = () => {
                     } 
                     {isValidSignUpInfo && 
                         <Section margin="0 auto" padding="40px 0 10px">
-                            <PersonalInfo id={id} signUpInfo={signUpInfo} setPersonalInfo={setPersonalInfo} setIsOpenModal={setIsOpenModal}/>
+                            <PersonalInfo 
+                                id={id} 
+                                signUpInfo={signUpInfo} 
+                                setPersonalInfo={setPersonalInfo} 
+                                setIsOpenModal={setIsOpenModal} 
+                                checkedHobby={checkedHobby} 
+                                setCheckedHobby={setCheckedHobby}
+                            />
                         </Section>
                     }
                 </ContextInformationPerson.Provider> 
@@ -73,7 +84,9 @@ export const Main = () => {
                     <Paragraph color={themes.colors.white}>Sex: {personalInfo.sex}</Paragraph>
                     <Paragraph color={themes.colors.white}>Birthday: {personalInfo.birthday}</Paragraph>
                     <Paragraph color={themes.colors.white}>Your favorite ocean: {personalInfo.ocean}</Paragraph>
-                    <Paragraph color={themes.colors.white}>Hobby: {personalInfo.hobby}</Paragraph>
+                    <Paragraph color={themes.colors.white}>
+                        Hobby: {Array.isArray(personalInfo.hobby) && personalInfo.hobby.map(item => `${item} `)}
+                    </Paragraph>
                 </Modal>
             </ContextPerson.Provider>
             <FooterContainer/>

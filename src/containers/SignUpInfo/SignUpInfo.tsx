@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "../../components/common-components/Button";
 import { Divide } from "../../components/common-components/Divide";
 import { Form } from "../../components/common-components/Form";
@@ -40,8 +40,7 @@ export const SignUpInfo = React.memo(({ setSignUpInfo }: ISignUpInfoProps) => {
     }
 
     useEffect(() => {
-        if(mobilePhone.length !== 0)
-        {
+        if(mobilePhone.length !== 0){
             validation('mobilePhone', mobilePhone, setErrorMobilePhone);
         }  
     },[mobilePhone])
@@ -93,14 +92,14 @@ export const SignUpInfo = React.memo(({ setSignUpInfo }: ISignUpInfoProps) => {
             password: password,
         }, setErrors)
 
-         if(!errorMobilePhone && !errorEmail && !errorPassword && !errorRepeatPassword && isValid) {
+        if(!errorMobilePhone && !errorEmail && !errorPassword && !errorRepeatPassword && isValid) {
             setSignUpInfo({
-                        mobilePhone: mobilePhone,
-                        email: email,
-                        password: password,
-                    })
+                mobilePhone: mobilePhone,
+                email: email,
+                password: password,
+            })
             toggleIsValid();
-         }
+        }
     }
     
     return (

@@ -37,7 +37,15 @@ export const Modal = ({ title, isOpen, onCancel, children }: IModalProps) => {
                                     {children}
                                 </Divide>
                                 <Divide width={100} className="modalFooter" display="flex" justifyContent="flex-end" columnGap="20">
-                                    <Button width="100" onClick={onCancel} fontSize="18" height="30" backgroundColor={themes.colors.pink}>Cancel</Button>
+                                    <Button 
+                                        width="100" 
+                                        onClick={onCancel} 
+                                        fontSize="18" 
+                                        height="30" 
+                                        backgroundColor={themes.colors.pink}
+                                    >
+                                        Cancel
+                                    </Button>
                                 </Divide>
                             </ModalWindow>
                         </ModalOverlay>
